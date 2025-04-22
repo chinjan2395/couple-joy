@@ -1,5 +1,7 @@
-package com.chinjan.couplejoy
+package com.chinjan.couplejoy.utils
 
+import com.chinjan.couplejoy.CoupleWidgetProvider
+import com.chinjan.couplejoy.R
 import android.Manifest
 import android.app.AlarmManager
 import android.app.NotificationChannel
@@ -128,7 +130,7 @@ object CoupleWidgetHelper {
         }
     }
 
-//    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    //    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun showNewMessageNotification(context: Context, message: String) {
         val channelId = "couple_widget_channel"
 

@@ -1,4 +1,4 @@
-package com.chinjan.couplejoy
+package com.chinjan.couplejoy.ui.screen
 
 import android.content.Context
 import android.os.Build
@@ -22,6 +22,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.chinjan.couplejoy.viewmodel.MainViewModel
+import com.chinjan.couplejoy.R
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore

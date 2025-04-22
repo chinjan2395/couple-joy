@@ -1,4 +1,4 @@
-package com.chinjan.couplejoy
+package com.chinjan.couplejoy.ui.screen
 
 import android.content.Context
 import android.util.Log
@@ -14,12 +14,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import java.util.UUID
 
 @Composable
 fun CoupleSetupScreen(onContinue: () -> Unit) {
