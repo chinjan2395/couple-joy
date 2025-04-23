@@ -1,10 +1,7 @@
 package com.chinjan.couplejoy.ui.screen
 
 import android.content.Context
-import android.os.Build
-import android.util.Log
 import android.widget.RemoteViews
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -24,10 +21,6 @@ import androidx.core.content.edit
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chinjan.couplejoy.viewmodel.MainViewModel
 import com.chinjan.couplejoy.R
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.SetOptions
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 
 @Composable
 fun MessageScreen(viewModel: MainViewModel = viewModel()) {
@@ -108,7 +101,7 @@ fun MessageScreen(viewModel: MainViewModel = viewModel()) {
                         val views = RemoteViews(context.packageName, R.layout.couple_widget)
                         views.setTextViewText(R.id.widgetMessage, message.text)
 
-                        sendMessageToFirebase(context, message.text)
+                        viewModel.sendMessage(message.text)
                         message = TextFieldValue("")
                     },
                     shape = RoundedCornerShape(50),
@@ -137,31 +130,4 @@ fun MessageScreen(viewModel: MainViewModel = viewModel()) {
             }
         }
     }
-}
-
-fun sendMessageToFirebase(context: Context, message: String) {
-    val prefs = context.getSharedPreferences("CoupleWidgetPrefs", Context.MODE_PRIVATE)
-    val partner = prefs.getString("partner_role", "partnerA") ?: "partnerA"
-    val coupleId = prefs.getString("couple_id", "default") ?: "default"
-
-    val db = Firebase.firestore
-    val messageData = hashMapOf(
-        "message" to message,
-        "timestamp" to FieldValue.serverTimestamp(),
-        "device" to "${Build.MANUFACTURER} ${Build.MODEL}"
-    )
-
-    db.collection("couples")
-        .document(coupleId)
-        .collection("messages")
-        .document(partner)
-        .set(messageData, SetOptions.merge())
-        .addOnSuccessListener {
-            Log.d("Firebase", "Message sent successfully!")
-            Toast.makeText(context, "Message sent!", Toast.LENGTH_SHORT).show()
-        }
-        .addOnFailureListener { e ->
-            Log.w("Firebase", "Error writing message", e)
-            Toast.makeText(context, "Failed to send", Toast.LENGTH_SHORT).show()
-        }
 }
