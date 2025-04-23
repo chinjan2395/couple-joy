@@ -21,8 +21,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.edit
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Source
+import com.chinjan.couplejoy.data.FirebaseRepository
 
 object CoupleWidgetHelper {
 
@@ -34,10 +33,17 @@ object CoupleWidgetHelper {
 
         if (coupleId != null && role != null) {
             val oppositeRole = if (role == "partnerA") "partnerB" else "partnerA"
+            val repository = FirebaseRepository(context)
 
             Log.d("CoupleWidgetProvider", "updateWidgetContent role:$role oppositeRole:$oppositeRole ")
 
-            FirebaseFirestore.getInstance()
+            repository.getMessage(coupleId, oppositeRole) { message ->
+                val displayMessage = message ?: "No message yet"
+                Log.d("CoupleWidgetProvider", "getMessage->message:$message")
+                updateWidgetWithMessage(context, displayMessage)
+            }
+
+            /*FirebaseFirestore.getInstance()
                 .collection("couples")
                 .document(coupleId)
                 .collection("messages")
@@ -46,15 +52,7 @@ object CoupleWidgetHelper {
                 .addOnSuccessListener { document ->
                     val message = document.getString("message") ?: "No message yet"
                     updateWidgetWithMessage(context, message)
-
-                    /*// Tapping on widget opens app
-                    val intent = Intent(context, MainActivity::class.java)
-                    val pendingIntent = PendingIntent.getActivity(
-                        context, 0, intent,
-                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                    )
-                    views.setOnClickPendingIntent(R.id.widgetMessage, pendingIntent)*/
-                }
+                }*/
         } else {
             views.setTextViewText(R.id.widgetMessage, "Please set couple ID and role.")
 //            appWidgetManager.updateAppWidget(componentName, views)

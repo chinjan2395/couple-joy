@@ -1,6 +1,5 @@
 package com.chinjan.couplejoy.ui.screen
 
-import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -13,14 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.core.content.edit
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.SetOptions
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.chinjan.couplejoy.viewmodel.MainViewModel
 
 @Composable
-fun CoupleSetupScreen(onContinue: () -> Unit) {
+fun CoupleSetupScreen(viewModel: MainViewModel = viewModel(), onContinue: () -> Unit) {
     val context = LocalContext.current
     var coupleId by remember { mutableStateOf("testing") }
     var selectedRole by remember { mutableStateOf("partnerA") }
@@ -73,60 +69,18 @@ fun CoupleSetupScreen(onContinue: () -> Unit) {
                         return@Button
                     }
 
-                    val uid = getUUId(context)
-                    val docRef = Firebase.firestore
-                        .collection("couples")
-                        .document(coupleId)
-                        .collection("messages")
-                        .document(selectedRole)
-
-                    Log.d(
-                        "Firebase",
-                        "Setting up device:$uid for role:$selectedRole in couple id:$coupleId"
+                    viewModel.setupPartner(
+                        coupleId = coupleId,
+                        selectedRole = selectedRole,
+                        context = context,
+                        onSuccess = {
+                            Toast.makeText(context, "Setup complete 🎉", Toast.LENGTH_SHORT).show()
+                            onContinue()
+                        },
+                        onError = { error ->
+                            Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                        }
                     )
-
-                    docRef
-                        .get()
-                        .addOnSuccessListener { doc ->
-                            val existingUUId = doc.getString("uid")
-                            Log.w("Firebase", "existingUUId: $existingUUId")
-                            if (existingUUId != null && existingUUId != uid) {
-                                Log.w(
-                                    "Firebase",
-                                    "This partner is already registered. Please choose the other."
-                                )
-                                Toast.makeText(
-                                    context,
-                                    "This partner is already registered. Please choose the other.",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            } else {
-                                // ✅ Role is free or same device is re-setting up
-                                Log.d(
-                                    "Firebase",
-                                    " Role is free or same device $uid is re-setting up"
-                                )
-                                docRef.set(
-                                    mapOf("uid" to uid),
-                                    SetOptions.merge()
-                                )
-                                val prefs = context.getSharedPreferences(
-                                    "CoupleWidgetPrefs",
-                                    Context.MODE_PRIVATE
-                                )
-                                prefs.edit {
-                                    putString("couple_id", coupleId.trim())
-                                        .putString("partner_role", selectedRole)
-                                        .apply()
-                                }
-                                onContinue() // navigate to main screen or widget preview
-                            }
-                        }
-                        .addOnFailureListener { e ->
-                            Log.w("Firebase", "Error selecting couple id", e)
-                            Toast.makeText(context, "Error selecting couple id", Toast.LENGTH_SHORT)
-                                .show()
-                        }
                 }
             },
             shape = RoundedCornerShape(12.dp),
@@ -155,17 +109,4 @@ fun RoleOption(label: String, value: String, selected: String, onSelected: (Stri
         )
         Text(label)
     }
-}
-
-fun getUUId(context: Context): String? {
-    val prefs = context.getSharedPreferences("CoupleWidgetPrefs", Context.MODE_PRIVATE)
-    var id = prefs.getString("uid", null)
-    Log.d("Firebase", "id: $id")
-    if (id == null) {
-        id = Firebase.auth.currentUser?.uid
-        Log.d("Firebase", "currentUser: $id")
-        prefs.edit { putString("uid", id) }
-        return id
-    }
-    return id
 }
