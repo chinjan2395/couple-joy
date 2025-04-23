@@ -45,10 +45,13 @@ fun MessageInput(
                 onValueChange = onMessageChange,
                 placeholder = { Text("Type something lovely...") },
                 modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color(0xFFFD9BB0), unfocusedBorderColor = Color.LightGray
-                ),
-                shape = RoundedCornerShape(20.dp)
+                    focusedBorderColor = Color(0xFFFD9BB0), unfocusedBorderColor = Color.LightGray,
+                    unfocusedContainerColor = Color.White,
+                    focusedContainerColor = Color.White,
+                    errorContainerColor = Color.White
+                )
             )
 
             if (checkAlpha > 0f) {
