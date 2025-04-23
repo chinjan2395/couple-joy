@@ -4,23 +4,21 @@ import android.content.Context
 import android.widget.RemoteViews
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chinjan.couplejoy.viewmodel.MainViewModel
 import com.chinjan.couplejoy.R
+import com.chinjan.couplejoy.ui.components.MessageInput
+import com.chinjan.couplejoy.ui.components.PartnerHeader
+import com.chinjan.couplejoy.ui.components.ResetSection
 
 @Composable
 fun MessageScreen(viewModel: MainViewModel = viewModel()) {
