@@ -32,9 +32,14 @@ fun MessageScreen(viewModel: MainViewModel = viewModel()) {
     val role = prefs.getString("partner_role", "Partner") ?: "Partner"
     val initial = role.takeLast(1).uppercase() // "PartnerA" → "A", "PartnerB" → "B"
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = Color(0xFFFFF3F6)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(Color(0xFFFFF3F6), Color(0xFFFCE4EC))
+                )
+            )
     ) {
         Column(
             modifier = Modifier
