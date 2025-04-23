@@ -38,12 +38,6 @@ class CoupleWidgetProvider : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
 
-        if (intent.action == "com.chinjan.couplejoy.SYNC_WIDGET") {
-            val appWidgetManager = AppWidgetManager.getInstance(context)
-            val thisWidget = ComponentName(context, CoupleWidgetProvider::class.java)
-            CoupleWidgetHelper.updateWidgetContent(context, appWidgetManager, thisWidget)
-        }
-
         if (AppWidgetManager.ACTION_APPWIDGET_UPDATE == intent.action) {
 
             val appWidgetManager = AppWidgetManager.getInstance(context)
@@ -85,8 +79,7 @@ class CoupleWidgetProvider : AppWidgetProvider() {
         appWidgetManager.updateAppWidget(appWidgetId, views)
 
         if (coupleId.isNotEmpty() && partnerRole.isNotEmpty()) {
-            val thisWidget = ComponentName(context, CoupleWidgetProvider::class.java)
-            CoupleWidgetHelper.updateWidgetContent(context, appWidgetManager, thisWidget)
+            CoupleWidgetHelper.updateWidgetContent(context)
         }
     }
 }

@@ -26,7 +26,7 @@ import com.google.firebase.firestore.Source
 
 object CoupleWidgetHelper {
 
-    fun updateWidgetContent(context: Context, appWidgetManager: AppWidgetManager, componentName: ComponentName) {
+    fun updateWidgetContent(context: Context) {
         val sharedPrefs = context.getSharedPreferences("CoupleWidgetPrefs", Context.MODE_PRIVATE)
         val coupleId = sharedPrefs.getString("couple_id", null)
         val role = sharedPrefs.getString("partner_role", null)
