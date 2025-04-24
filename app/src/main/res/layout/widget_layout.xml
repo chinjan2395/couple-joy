@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:text="No message yet"
+        android:text="@string/default_placeholder_message"
         android:textColor="#000"
         android:textSize="16sp" />
 
@@ -20,10 +20,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/messageText"
+        android:autofillHints="@string/message_screen_title"
         android:background="@android:drawable/editbox_background"
-        android:hint="Type a message"
+        android:hint="@string/message_screen_title"
         android:inputType="text"
-        android:minHeight="48dp" />
+        android:minHeight="48dp"
+        />
 
     <Button
         android:id="@+id/sendButton"
@@ -31,5 +33,5 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/inputField"
         android:layout_alignParentEnd="true"
-        android:text="Send" />
+        android:text="@string/send_button_text" />
 </RelativeLayout>
