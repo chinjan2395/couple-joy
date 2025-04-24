@@ -7,7 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.chinjan.couplejoy.R
 
 @Composable
 fun ResetSection(resetSetup: () -> Unit) {
@@ -15,7 +17,7 @@ fun ResetSection(resetSetup: () -> Unit) {
         HorizontalDivider(color = Color.LightGray, thickness = 1.dp)
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "Want to start fresh?",
+            text = stringResource(R.string.start_fresh_button_text),
             style = MaterialTheme.typography.bodySmall,
             color = Color.Gray
         )
@@ -25,7 +27,7 @@ fun ResetSection(resetSetup: () -> Unit) {
             shape = RoundedCornerShape(20.dp),
             colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.DarkGray)
         ) {
-            Text("Reset Setup")
+            Text(stringResource(R.string.reset_setup_button_text))
         }
     }
 }

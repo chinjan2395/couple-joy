@@ -11,15 +11,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.chinjan.couplejoy.R
+import com.chinjan.couplejoy.utils.Constants
 import com.chinjan.couplejoy.viewmodel.MainViewModel
 
 @Composable
 fun CoupleSetupScreen(viewModel: MainViewModel = viewModel(), onContinue: () -> Unit) {
     val context = LocalContext.current
     var coupleId by remember { mutableStateOf("testing") }
-    var selectedRole by remember { mutableStateOf("partnerA") }
+    var selectedRole by remember { mutableStateOf(Constants.PARTNER_A) }
+    var setupCompleteText = stringResource(R.string.setup_complete)
 
     Column(
         modifier = Modifier
@@ -29,7 +33,7 @@ fun CoupleSetupScreen(viewModel: MainViewModel = viewModel(), onContinue: () -> 
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            "Enter Couple Code",
+            stringResource(R.string.enter_couple_code),
             style = MaterialTheme.typography.titleLarge,
             color = Color(0xFF333333)
         )
@@ -39,7 +43,7 @@ fun CoupleSetupScreen(viewModel: MainViewModel = viewModel(), onContinue: () -> 
         OutlinedTextField(
             value = coupleId,
             onValueChange = { coupleId = it },
-            label = { Text("Couple ID") },
+            label = { Text(stringResource(R.string.couple_id)) },
             singleLine = true,
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier.fillMaxWidth()
@@ -47,7 +51,7 @@ fun CoupleSetupScreen(viewModel: MainViewModel = viewModel(), onContinue: () -> 
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Text("Select Your Role", style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.select_partner_role), style = MaterialTheme.typography.titleMedium)
 
         Row(
             modifier = Modifier
@@ -55,8 +59,8 @@ fun CoupleSetupScreen(viewModel: MainViewModel = viewModel(), onContinue: () -> 
                 .padding(top = 8.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            RoleOption("Partner A", "partnerA", selectedRole) { selectedRole = it }
-            RoleOption("Partner B", "partnerB", selectedRole) { selectedRole = it }
+            RoleOption(stringResource(R.string.partner_a), Constants.PARTNER_A, selectedRole) { selectedRole = it }
+            RoleOption(stringResource(R.string.partner_b), Constants.PARTNER_B, selectedRole) { selectedRole = it }
         }
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -74,7 +78,7 @@ fun CoupleSetupScreen(viewModel: MainViewModel = viewModel(), onContinue: () -> 
                         selectedRole = selectedRole,
                         context = context,
                         onSuccess = {
-                            Toast.makeText(context, "Setup complete 🎉", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, setupCompleteText, Toast.LENGTH_SHORT).show()
                             onContinue()
                         },
                         onError = { error ->
@@ -87,7 +91,7 @@ fun CoupleSetupScreen(viewModel: MainViewModel = viewModel(), onContinue: () -> 
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7C4DFF)),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Continue", color = Color.White)
+            Text(stringResource(R.string.continue_button_text), color = Color.White)
         }
     }
 }

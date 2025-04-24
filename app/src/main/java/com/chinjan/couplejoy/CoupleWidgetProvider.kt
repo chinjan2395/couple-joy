@@ -19,7 +19,8 @@ class CoupleWidgetProvider : AppWidgetProvider() {
         Firebase.firestore.clearPersistence()
 
         val prefs = context.getSharedPreferences("CoupleWidgetPrefs", Context.MODE_PRIVATE)
-        prefs.edit { putString("last_displayed_message", "Your partner's message") }
+        val widgetPlaceholder = R.string.widget_placeholder
+        prefs.edit { putString("last_displayed_message", widgetPlaceholder.toString()) }
     }
 
     override fun onUpdate(

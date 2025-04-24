@@ -9,9 +9,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.chinjan.couplejoy.R
 
 @Composable
 fun PartnerHeader(initial: String) {
@@ -33,7 +35,7 @@ fun PartnerHeader(initial: String) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "💌 Couple Widget",
+            text = stringResource(R.string.app_name),
             style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
             textAlign = TextAlign.Center,
             color = Color(0xFF333333)
@@ -42,7 +44,7 @@ fun PartnerHeader(initial: String) {
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Send a sweet message to your partner",
+            text = stringResource(R.string.message_screen_title),
             style = MaterialTheme.typography.bodyLarge,
             color = Color.DarkGray,
             textAlign = TextAlign.Center

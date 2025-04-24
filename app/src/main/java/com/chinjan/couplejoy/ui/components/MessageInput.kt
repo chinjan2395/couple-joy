@@ -18,9 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.chinjan.couplejoy.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -43,18 +45,21 @@ fun MessageInput(
             OutlinedTextField(
                 value = message,
                 onValueChange = onMessageChange,
-                placeholder = { Text("Type something lovely...") },
+                placeholder = { Text(stringResource(R.string.message_placeholder)) },
                 modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color(0xFFFD9BB0), unfocusedBorderColor = Color.LightGray
-                ),
-                shape = RoundedCornerShape(20.dp)
+                    focusedBorderColor = Color(0xFFFD9BB0), unfocusedBorderColor = Color.LightGray,
+                    unfocusedContainerColor = Color.White,
+                    focusedContainerColor = Color.White,
+                    errorContainerColor = Color.White
+                )
             )
 
             if (checkAlpha > 0f) {
                 Icon(
                     imageVector = Icons.Default.Check,
-                    contentDescription = "Message Sent",
+                    contentDescription = stringResource(R.string.toast_message_sent),
                     tint = Color(0xFF4CAF50),
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
@@ -95,7 +100,7 @@ fun MessageInput(
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFD9BB0))
         ) {
             Text(
-                "Send",
+                stringResource(R.string.send_button_text),
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
             )
         }
