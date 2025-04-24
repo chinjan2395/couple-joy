@@ -7,7 +7,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
-import androidx.core.content.edit
+import com.chinjan.couplejoy.data.prefs.PreferenceManager
 import com.chinjan.couplejoy.utils.CoupleWidgetHelper
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -18,9 +18,8 @@ class CoupleWidgetProvider : AppWidgetProvider() {
         super.onEnabled(context)
         Firebase.firestore.clearPersistence()
 
-        val prefs = context.getSharedPreferences("CoupleWidgetPrefs", Context.MODE_PRIVATE)
-        val widgetPlaceholder = R.string.widget_placeholder
-        prefs.edit { putString("last_displayed_message", widgetPlaceholder.toString()) }
+        val prefs by lazy { PreferenceManager(context) }
+        prefs.setLastDisplayedMessage(context.getString(R.string.widget_placeholder))
     }
 
     override fun onUpdate(
@@ -58,9 +57,9 @@ class CoupleWidgetProvider : AppWidgetProvider() {
         appWidgetId: Int
     ) {
 
-        val prefs = context.getSharedPreferences("CoupleWidgetPrefs", Context.MODE_PRIVATE)
-        val coupleId = prefs.getString("couple_id", "") ?: ""
-        val partnerRole = prefs.getString("partner_role", "") ?: ""
+        val prefs by lazy { PreferenceManager(context) }
+        val coupleId = prefs.getCoupleId()
+        val role = prefs.getRole()
 
         val views = RemoteViews(context.packageName, R.layout.couple_widget)
 
@@ -79,7 +78,7 @@ class CoupleWidgetProvider : AppWidgetProvider() {
         // 🔁 Update widget
         appWidgetManager.updateAppWidget(appWidgetId, views)
 
-        if (coupleId.isNotEmpty() && partnerRole.isNotEmpty()) {
+        if (coupleId?.isNotEmpty() == true && role.isNotEmpty()) {
             CoupleWidgetHelper.updateWidgetContent(context)
         }
     }
