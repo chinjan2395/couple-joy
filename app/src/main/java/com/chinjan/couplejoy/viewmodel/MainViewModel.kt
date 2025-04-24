@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
 import com.chinjan.couplejoy.data.FirebaseRepository
+import com.chinjan.couplejoy.utils.Constants
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -99,10 +100,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getUUId(context: Context): String? {
         val prefs = context.getSharedPreferences("CoupleWidgetPrefs", Context.MODE_PRIVATE)
-        var id = prefs.getString("uid", null)
+        var id = prefs.getString(Constants.COLLECTION_UID, null)
         if (id == null) {
             id = Firebase.auth.currentUser?.uid
-            prefs.edit { putString("uid", id) }
+            prefs.edit { putString(Constants.COLLECTION_UID, id) }
             return id
         }
         return id

@@ -3,6 +3,7 @@ package com.chinjan.couplejoy.data
 import android.content.Context
 import android.os.Build
 import android.util.Log
+import com.chinjan.couplejoy.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -19,35 +20,35 @@ class FirebaseRepository(private val context: Context) {
 
     // 🔧 Dynamic paths
     fun coupleDocument(coupleId: String) =
-        firestore.collection(COLLECTION_COUPLES).document(coupleId)
+        firestore.collection(Constants.COLLECTION_COUPLES).document(coupleId)
 
     fun messageDocument(coupleId: String, partnerId: String) =
-        coupleDocument(coupleId).collection(COLLECTION_MESSAGES).document(partnerId)
+        coupleDocument(coupleId).collection(Constants.COLLECTION_MESSAGES).document(partnerId)
 
     fun deviceInfoDocument(coupleId: String, deviceId: String) =
-        coupleDocument(coupleId).collection(COLLECTION_DEVICES).document(deviceId)
+        coupleDocument(coupleId).collection(Constants.COLLECTION_DEVICES).document(deviceId)
 
     // ✅ Save partner message
     fun sendMessage(coupleId: String, partnerId: String, message: String) =
         messageDocument(coupleId, partnerId).set(mapOf(
-            "message" to message,
+            Constants.COLLECTION_MESSAGE to message,
             "timestamp" to FieldValue.serverTimestamp(),
-            "uid" to currentUserId,
+            Constants.COLLECTION_UID to currentUserId,
             "device" to "${Build.MANUFACTURER} ${Build.MODEL}"
         ))
 
     // ✅ Get partner message
     fun getMessage(coupleId: String, partnerId: String, onSuccess: (String?) -> Unit) {
         messageDocument(coupleId, partnerId).get(Source.SERVER).addOnSuccessListener { document ->
-                onSuccess(document.getString("message"))
+                onSuccess(document.getString(Constants.COLLECTION_MESSAGE))
             }
     }
 
     fun deleteIfOwner(coupleId: String, partnerId: String, uid: String, onSuccess: () -> Unit) {
-        firestore.collection("couples").document(coupleId).collection("messages")
+        firestore.collection(Constants.COLLECTION_COUPLES).document(coupleId).collection(Constants.COLLECTION_MESSAGES)
             .document(partnerId).get(Source.SERVER).addOnSuccessListener { document ->
-                if (document.getString("uid") == uid) {
-                    firestore.collection("couples").document(coupleId).collection("messages")
+                if (document.getString(Constants.COLLECTION_UID) == uid) {
+                    firestore.collection(Constants.COLLECTION_COUPLES).document(coupleId).collection(Constants.COLLECTION_MESSAGES)
                         .document(partnerId).delete().addOnSuccessListener { onSuccess() }
                 } else {
                     onSuccess() // still reset local prefs even if uid doesn't match
@@ -65,7 +66,7 @@ class FirebaseRepository(private val context: Context) {
         onFailure: (String) -> Unit
     ) {
         messageDocument(coupleId, partnerId).get().addOnSuccessListener { doc ->
-                val existingUid = doc.getString("uid")
+                val existingUid = doc.getString(Constants.COLLECTION_UID)
                 if (existingUid != null && existingUid != uid) {
                     Log.w(
                         "Firebase",
@@ -81,11 +82,5 @@ class FirebaseRepository(private val context: Context) {
             .addOnFailureListener {
                 onFailure("Error checking partner registration.")
             }
-    }
-
-    companion object {
-        const val COLLECTION_COUPLES = "couples"
-        const val COLLECTION_MESSAGES = "messages"
-        const val COLLECTION_DEVICES = "devices"
     }
 }
