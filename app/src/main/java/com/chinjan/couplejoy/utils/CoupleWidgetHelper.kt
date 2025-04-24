@@ -16,23 +16,22 @@ import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import android.widget.RemoteViews
-//import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.edit
 import com.chinjan.couplejoy.data.FirebaseRepository
+import com.chinjan.couplejoy.data.prefs.PreferenceManager
 
 object CoupleWidgetHelper {
 
     fun updateWidgetContent(context: Context) {
-        val sharedPrefs = context.getSharedPreferences("CoupleWidgetPrefs", Context.MODE_PRIVATE)
-        val coupleId = sharedPrefs.getString("couple_id", null)
-        val role = sharedPrefs.getString("partner_role", null)
+        val prefs by lazy { PreferenceManager(context) }
+        val coupleId = prefs.getCoupleId()
+        val role = prefs.getRole()
         val views = RemoteViews(context.packageName, R.layout.couple_widget)
 
-        if (coupleId != null && role != null) {
-            val oppositeRole = if (role == "partnerA") "partnerB" else "partnerA"
+        if (coupleId != null) {
+            val oppositeRole = if (role == Constants.PARTNER_A) Constants.PARTNER_B else Constants.PARTNER_A
             val repository = FirebaseRepository(context)
 
             Log.d("CoupleWidgetProvider", "updateWidgetContent role:$role oppositeRole:$oppositeRole ")
@@ -42,17 +41,6 @@ object CoupleWidgetHelper {
                 Log.d("CoupleWidgetProvider", "getMessage->message:$message")
                 updateWidgetWithMessage(context, displayMessage)
             }
-
-            /*FirebaseFirestore.getInstance()
-                .collection("couples")
-                .document(coupleId)
-                .collection("messages")
-                .document(oppositeRole)
-                .get(Source.SERVER) // Force fetch latest
-                .addOnSuccessListener { document ->
-                    val message = document.getString("message") ?: "No message yet"
-                    updateWidgetWithMessage(context, message)
-                }*/
         } else {
             views.setTextViewText(R.id.widgetMessage, "Please set couple ID and role.")
 //            appWidgetManager.updateAppWidget(componentName, views)
@@ -92,16 +80,16 @@ object CoupleWidgetHelper {
     }
 
     fun updateWidgetWithMessage(context: Context, message: String) {
-        val prefs = context.getSharedPreferences("CoupleWidgetPrefs", Context.MODE_PRIVATE)
+        val prefs by lazy { PreferenceManager(context) }
 
         // 👇 Set default if not already set
-        if (!prefs.contains("last_displayed_message")) {
-            prefs.edit { putString("last_displayed_message", "Your partner's message") }
+        if (!prefs.hasLastDisplayedMessage()) {
+            prefs.setLastDisplayedMessage(context.getString(R.string.widget_placeholder))
         }
 
-        val previousMessage = prefs.getString("last_displayed_message", "")
-        val role = prefs.getString("partner_role", null)
-        val oppositeRole = if (role == "partnerA") "partnerB" else "partnerA"
+        val previousMessage = prefs.getLastDisplayedMessage()
+        val role = prefs.getRole()
+        val oppositeRole = if (role == Constants.PARTNER_A) Constants.PARTNER_B else Constants.PARTNER_A
 
         Log.d("CoupleWidgetProvider", "updateWidgetWithMessage role $role :message $message")
 
@@ -123,12 +111,11 @@ object CoupleWidgetHelper {
             }
 
             // Save new message
-            prefs.edit { putString("last_displayed_message", message) }
+            prefs.setLastDisplayedMessage(message)
 
         }
     }
 
-    //    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun showNewMessageNotification(context: Context, message: String) {
         val channelId = "couple_widget_channel"
 

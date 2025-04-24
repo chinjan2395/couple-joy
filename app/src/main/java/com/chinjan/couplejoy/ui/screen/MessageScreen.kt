@@ -1,6 +1,5 @@
 package com.chinjan.couplejoy.ui.screen
 
-import android.content.Context
 import android.widget.RemoteViews
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -12,10 +11,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.core.content.edit
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chinjan.couplejoy.viewmodel.MainViewModel
 import com.chinjan.couplejoy.R
+import com.chinjan.couplejoy.data.prefs.PreferenceManager
 import com.chinjan.couplejoy.ui.components.MessageInput
 import com.chinjan.couplejoy.ui.components.PartnerHeader
 import com.chinjan.couplejoy.ui.components.ResetSection
@@ -26,8 +25,9 @@ fun MessageScreen(viewModel: MainViewModel = viewModel()) {
     var message by remember { mutableStateOf(TextFieldValue("")) }
 
     // Retrieve coupleId and role
-    val prefs = context.getSharedPreferences("CoupleWidgetPrefs", Context.MODE_PRIVATE)
-    val role = prefs.getString("partner_role", "Partner") ?: "Partner"
+    val prefs by lazy { PreferenceManager(context) }
+    val role = prefs.getRole()
+
     val initial = role.takeLast(1).uppercase() // "PartnerA" → "A", "PartnerB" → "B"
 
     Box(
@@ -54,7 +54,8 @@ fun MessageScreen(viewModel: MainViewModel = viewModel()) {
                     message = message,
                     onMessageChange = { message = it },
                     onSend = {
-                        prefs.edit { putString("partner_message", message.text) }
+                        //TODO find usage of partner_message
+//                        prefs.edit { putString("partner_message", message.text) }
 
                         val views = RemoteViews(context.packageName, R.layout.couple_widget)
                         views.setTextViewText(R.id.widgetMessage, message.text)

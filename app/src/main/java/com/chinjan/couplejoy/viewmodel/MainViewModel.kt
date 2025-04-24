@@ -3,10 +3,9 @@ package com.chinjan.couplejoy.viewmodel
 import android.app.Application
 import android.content.Context
 import android.util.Log
-import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
 import com.chinjan.couplejoy.data.FirebaseRepository
-import com.chinjan.couplejoy.utils.Constants
+import com.chinjan.couplejoy.data.prefs.PreferenceManager
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val context = application.applicationContext
-    private val prefs = context.getSharedPreferences("CoupleWidgetPrefs", Context.MODE_PRIVATE)
+    val prefs by lazy { PreferenceManager(context) }
 
     private val repository = FirebaseRepository(context) // 🔥 Inject repository
 
@@ -22,14 +21,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val isSetupDone = _isSetupDone.asStateFlow()
 
     init {
-        val coupleId = prefs.getString("couple_id", null)
-        val role = prefs.getString("partner_role", null)
+        val coupleId = prefs.getCoupleId()
+        val role = prefs.getRole()
         _isSetupDone.value = !coupleId.isNullOrEmpty() && !role.isNullOrEmpty()
     }
 
     fun isSetupComplete(): Boolean {
-        return !prefs.getString("couple_id", null).isNullOrEmpty() &&
-                !prefs.getString("partner_role", null).isNullOrEmpty()
+        return prefs.getCoupleId()?.isNotEmpty() == true &&
+                prefs.getRole().isNotEmpty()
     }
 
     fun markSetupComplete() {
@@ -37,25 +36,25 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun resetSetup() {
-        val coupleId = prefs.getString("couple_id", null)
-        val role = prefs.getString("partner_role", null)
+        val coupleId = prefs.getCoupleId()
+        val role = prefs.getRole()
         val uid = Firebase.auth.currentUser?.uid
 
         if (coupleId != null && role != null && uid != null) {
             repository.deleteIfOwner(coupleId, role, uid) {
-                prefs.edit { clear() }
+                prefs.clear()
                 _isSetupDone.value = false
             }
         } else {
-            prefs.edit { clear() }
+            prefs.clear()
             _isSetupDone.value = false
         }
     }
 
     fun sendMessage(message: String) {
-        val coupleId = prefs.getString("couple_id", null)
-        val role = prefs.getString("partner_role", null)
-        if (!coupleId.isNullOrEmpty() && !role.isNullOrEmpty()) {
+        val coupleId = prefs.getCoupleId()
+        val role = prefs.getRole()
+        if (coupleId?.isNotEmpty() == true && role.isNotEmpty()) {
             repository.sendMessage(coupleId, role, message)
         }
     }
@@ -67,7 +66,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         onSuccess: () -> Unit,
         onError: (String) -> Unit
     ) {
-        val uid = getUUId(context)
+        val uid = getUUId()
         val repository = FirebaseRepository(context)
 
         repository.verifyAndSetPartnerRole(
@@ -80,11 +79,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     " Role is free or same device $uid is re-setting up"
                 )
                 // Save to prefs
-                val prefs = context.getSharedPreferences("CoupleWidgetPrefs", Context.MODE_PRIVATE)
-                prefs.edit {
-                    putString("couple_id", coupleId.trim())
-                    putString("partner_role", selectedRole)
-                }
+                prefs.setCoupleId(coupleId.trim())
+                prefs.setRole(selectedRole)
                 _isSetupDone.value = true
                 onSuccess()
             },
@@ -98,12 +94,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         )
     }
 
-    fun getUUId(context: Context): String? {
-        val prefs = context.getSharedPreferences("CoupleWidgetPrefs", Context.MODE_PRIVATE)
-        var id = prefs.getString(Constants.COLLECTION_UID, null)
+    fun getUUId(): String? {
+        var id = prefs.getUUID()
         if (id == null) {
             id = Firebase.auth.currentUser?.uid
-            prefs.edit { putString(Constants.COLLECTION_UID, id) }
+            prefs.setUUID(id)
             return id
         }
         return id
