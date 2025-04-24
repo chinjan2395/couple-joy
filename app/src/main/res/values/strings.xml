@@ -1,4 +1,23 @@
 
 <resources>
     <string name="app_name">CoupleWidget</string>
+    <string name="message_screen_title">Send a sweet message to your partner…</string>
+    <string name="default_placeholder_message">No message yet</string>
+    <string name="message_placeholder">Type something lovely…</string>
+    <string name="send_button_text">Send</string>
+    <string name="continue_button_text">Continue</string>
+    <string name="reset_setup_button_text">Reset Setup</string>
+    <string name="select_partner_role">Select Your Role</string>
+    <string name="enter_couple_code">Enter Couple Code</string>
+    <string name="couple_id">Couple ID</string>
+    <string name="partner_a">Partner A</string>
+    <string name="partner_b">Partner B</string>
+    <string name="setup_complete">Setup complete 🎉</string>
+    <string name="start_fresh_button_text">Want to start fresh?</string>
+
+    <!-- Feedback -->
+    <string name="toast_message_sent">Message sent!</string>
+
+    <!-- Widget -->
+    <string name="widget_placeholder">Waiting for your partner\'s message…</string>
 </resources>
