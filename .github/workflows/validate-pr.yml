@@ -1,0 +1,31 @@
+name: Validate Pull Request
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  validate-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR Description
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const body = context.payload.pull_request.body || "";
+
+            const hasIssue = /(?<=Closes\s+#)\d+/.test(body);
+            const hasDescription = body.trim().length > 30;
+            const hasCheckedBox = /\[x\]/i.test(body);
+
+            if (!hasDescription) {
+              core.setFailed("❌ PR description must not be empty.");
+            }
+
+            if (!hasIssue) {
+              core.setFailed("❌ PR must reference an issue using `Closes #123`.");
+            }
+
+            if (!hasCheckedBox) {
+              core.setFailed("❌ At least one 'Changes Included' box must be checked.");
+            }
