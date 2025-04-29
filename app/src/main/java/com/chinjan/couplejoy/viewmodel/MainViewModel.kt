@@ -4,21 +4,37 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import com.chinjan.couplejoy.data.FirebaseRepository
+import com.chinjan.couplejoy.data.model.Message
 import com.chinjan.couplejoy.data.prefs.PreferenceManager
+import com.chinjan.couplejoy.utils.Constants
+import com.chinjan.couplejoy.utils.CoupleWidgetHelper.formatRelativeTime
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val context = application.applicationContext
     val prefs by lazy { PreferenceManager(context) }
 
     private val repository = FirebaseRepository(context) // 🔥 Inject repository
+    private val _lastReceivedMessage = MutableStateFlow<Message?>(null)
+    private val _relativeTime = MutableStateFlow("")
+    private var tickerJob: Job? = null
 
     private val _isSetupDone = MutableStateFlow(isSetupComplete())
     val isSetupDone = _isSetupDone.asStateFlow()
+
+    val coupleId = prefs.getCoupleId()
+    val relativeTime: StateFlow<String> = _relativeTime
 
     init {
         val coupleId = prefs.getCoupleId()
@@ -102,5 +118,31 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             return id
         }
         return id
+    }
+
+    fun observeLatestMessage(coupleId: String, role: String) {
+        val oppositeRole = if (role == Constants.PARTNER_A) Constants.PARTNER_B else Constants.PARTNER_A
+
+        repository.messageDocument(coupleId, oppositeRole)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null || snapshot == null || !snapshot.exists()) return@addSnapshotListener
+                val message = snapshot.toObject(Message::class.java)
+                if (message != null) {
+                    _lastReceivedMessage.value = message
+                    startRelativeTimeTicker(message.timestamp)
+                }
+            }
+    }
+
+    fun startRelativeTimeTicker(timestamp: Timestamp) {
+        tickerJob?.cancel() // cancel existing
+        tickerJob = viewModelScope.launch {
+            while (isActive) {
+                val now = System.currentTimeMillis()
+                val diff = now - timestamp.toDate().time
+                _relativeTime.value = formatRelativeTime(diff)
+                delay(if (diff < 60_000) 1000L else 60_000L) // every sec under 1 min, else per min
+            }
+        }
     }
 }
