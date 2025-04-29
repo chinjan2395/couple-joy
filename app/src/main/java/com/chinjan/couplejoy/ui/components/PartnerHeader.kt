@@ -34,12 +34,12 @@ fun PartnerHeader(initial: String) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
+        /*Text(
             text = stringResource(R.string.app_name),
             style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
             textAlign = TextAlign.Center,
             color = Color(0xFF333333)
-        )
+        )*/
 
         Spacer(modifier = Modifier.height(8.dp))
 
