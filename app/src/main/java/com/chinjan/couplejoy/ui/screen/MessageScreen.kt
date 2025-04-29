@@ -23,12 +23,19 @@ import com.chinjan.couplejoy.ui.components.ResetSection
 fun MessageScreen(viewModel: MainViewModel = viewModel()) {
     val context = LocalContext.current
     var message by remember { mutableStateOf(TextFieldValue("")) }
+    val relativeTime by viewModel.relativeTime.collectAsState()
 
     // Retrieve coupleId and role
     val prefs by lazy { PreferenceManager(context) }
     val role = prefs.getRole()
 
     val initial = role.takeLast(1).uppercase() // "PartnerA" → "A", "PartnerB" → "B"
+
+    LaunchedEffect(Unit) {
+        val coupleId = viewModel.coupleId ?: return@LaunchedEffect
+        val role = PreferenceManager(context).getRole()
+        viewModel.observeLatestMessage(coupleId, role)
+    }
 
     Box(
         modifier = Modifier
@@ -48,7 +55,7 @@ fun MessageScreen(viewModel: MainViewModel = viewModel()) {
         ) {
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                PartnerHeader(initial)
+                PartnerHeader(initial, timestampText = relativeTime)
                 Spacer(modifier = Modifier.height(24.dp))
                 MessageInput(
                     message = message,
