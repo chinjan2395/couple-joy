@@ -4,7 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.chinjan.couplejoy.R
 
 @Composable
-fun PartnerHeader(initial: String) {
+fun PartnerHeader(initial: String, timestampText: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
             modifier = Modifier
@@ -33,6 +33,17 @@ fun PartnerHeader(initial: String) {
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+
+        if (timestampText.isNotEmpty()) {
+            Text(
+                text = timestampText,
+                style = MaterialTheme.typography.labelMedium,
+                color = Color.Gray,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+        
+        /*Spacer(modifier = Modifier.height(8.dp))*/
 
         /*Text(
             text = stringResource(R.string.app_name),
