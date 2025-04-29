@@ -21,6 +21,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.chinjan.couplejoy.data.FirebaseRepository
 import com.chinjan.couplejoy.data.prefs.PreferenceManager
+import java.util.concurrent.TimeUnit
 
 object CoupleWidgetHelper {
 
@@ -153,4 +154,21 @@ object CoupleWidgetHelper {
 
         NotificationManagerCompat.from(context).notify(1001, builder.build())
     }
+
+    fun formatRelativeTime(diffMillis: Long): String {
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(diffMillis)
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(diffMillis)
+        val hours = TimeUnit.MILLISECONDS.toHours(diffMillis)
+        val days = TimeUnit.MILLISECONDS.toDays(diffMillis)
+
+        return when {
+            seconds < 60 -> "$seconds sec ago"
+            minutes < 60 -> "$minutes min ago"
+            hours < 24 -> "$hours hour${if (hours > 1) "s" else ""} ago"
+            days < 7 -> "$days day${if (days > 1) "s" else ""} ago"
+            days < 30 -> "${days / 7} week${if ((days / 7) > 1) "s" else ""} ago"
+            else -> "${days / 30} month${if ((days / 30) > 1) "s" else ""} ago"
+        }
+    }
+
 }
