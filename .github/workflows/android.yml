@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-
+    name: Android Gradle Build
     runs-on: ubuntu-latest
 
     steps:
