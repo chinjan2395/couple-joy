@@ -28,6 +28,3 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build -Dorg.gradle.jvmargs="-Xmx2g -Dfile.encoding=UTF-8"
-
-# This is the status badge!
-# [![Android CI](https://github.com/chinjan2395/couple-joy/actions/workflows/android.yml/badge.svg)](https://github.com/chinjan2395/couple-joy/actions/workflows/android.yml)
