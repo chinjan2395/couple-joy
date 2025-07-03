@@ -33,9 +33,21 @@ fun PartnerHeader(ownerInitial: String, partnerInitial: String, lastMessage: Mes
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "Couple ID: ${coupleId}",
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.Gray
+        )
 
-        if (timestampText.isNotEmpty()) {
-            Text(
+        if ((lastMessage != null && lastMessage.message.isNotBlank()) && timestampText.isNotEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                MessageBubble(initial = partnerInitial, text = lastMessage.message.toString(), timestamp = timestampText)
+            }
+            /*Text(
                 text = timestampText,
                 style = MaterialTheme.typography.labelMedium,
                 color = Color.Gray,
