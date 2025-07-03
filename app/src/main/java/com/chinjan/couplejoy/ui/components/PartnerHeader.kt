@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.chinjan.couplejoy.R
 
 @Composable
-fun PartnerHeader(initial: String, timestampText: String) {
+fun PartnerHeader(ownerInitial: String, partnerInitial: String, lastMessage: Message?, timestampText: String, coupleId: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
             modifier = Modifier
