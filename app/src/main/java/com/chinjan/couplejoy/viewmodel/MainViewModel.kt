@@ -26,7 +26,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val prefs by lazy { PreferenceManager(context) }
 
     private val repository = FirebaseRepository(context) // 🔥 Inject repository
-    private val _lastReceivedMessage = MutableStateFlow<Message?>(null)
+    internal val _lastReceivedMessage = MutableStateFlow<Message?>(null)
     private val _relativeTime = MutableStateFlow("")
     private var tickerJob: Job? = null
 
@@ -127,6 +127,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             .addSnapshotListener { snapshot, error ->
                 if (error != null || snapshot == null || !snapshot.exists()) return@addSnapshotListener
                 val message = snapshot.toObject(Message::class.java)
+                Log.d("MessageScreen", "Snapshot: ${snapshot?.data}")
+                Log.d("MessageScreen", "Parsed: $message")
                 if (message != null) {
                     _lastReceivedMessage.value = message
                     startRelativeTimeTicker(message.timestamp)
