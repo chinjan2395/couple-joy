@@ -14,6 +14,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.chinjan.couplejoy.R
+import com.chinjan.couplejoy.data.model.Message
+import com.chinjan.couplejoy.ui.screen.MessageBubble
 
 @Composable
 fun PartnerHeader(ownerInitial: String, partnerInitial: String, lastMessage: Message?, timestampText: String, coupleId: String) {
@@ -26,7 +28,7 @@ fun PartnerHeader(ownerInitial: String, partnerInitial: String, lastMessage: Mes
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = initial,
+                text = ownerInitial,
                 style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
                 color = Color.White
             )
@@ -52,6 +54,12 @@ fun PartnerHeader(ownerInitial: String, partnerInitial: String, lastMessage: Mes
                 style = MaterialTheme.typography.labelMedium,
                 color = Color.Gray,
                 modifier = Modifier.padding(top = 4.dp)
+            )*/
+        } else {
+            Text(
+                text = "No message yet",
+                color = Color.DarkGray,
+                style = MaterialTheme.typography.bodyMedium
             )
         }
         
