@@ -72,8 +72,6 @@ fun PartnerHeader(ownerInitial: String, partnerInitial: String, lastMessage: Mes
             color = Color(0xFF333333)
         )*/
 
-        Spacer(modifier = Modifier.height(8.dp))
-
         Text(
             text = stringResource(R.string.message_screen_title),
             style = MaterialTheme.typography.bodyLarge,
