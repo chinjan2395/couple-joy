@@ -25,6 +25,7 @@ fun MessageScreen(viewModel: MainViewModel = viewModel()) {
     val context = LocalContext.current
     var message by remember { mutableStateOf(TextFieldValue("")) }
     val relativeTime by viewModel.relativeTime.collectAsState()
+    val lastMessage by viewModel._lastReceivedMessage.collectAsState()
 
     // Retrieve coupleId and role
     val prefs by lazy { PreferenceManager(context) }
@@ -58,8 +59,8 @@ fun MessageScreen(viewModel: MainViewModel = viewModel()) {
         ) {
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                PartnerHeader(initial, timestampText = relativeTime)
-                Spacer(modifier = Modifier.height(24.dp))
+                PartnerHeader(ownerInitial, partnerInitial, lastMessage = lastMessage, timestampText = relativeTime, viewModel.coupleId.toString())
+                Spacer(modifier = Modifier.height(18.dp))
                 MessageInput(
                     message = message,
                     onMessageChange = { message = it },
