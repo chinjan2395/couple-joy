@@ -18,18 +18,22 @@ import com.chinjan.couplejoy.data.prefs.PreferenceManager
 import com.chinjan.couplejoy.ui.components.MessageInput
 import com.chinjan.couplejoy.ui.components.PartnerHeader
 import com.chinjan.couplejoy.ui.components.ResetSection
+import com.chinjan.couplejoy.utils.Constants
 
 @Composable
 fun MessageScreen(viewModel: MainViewModel = viewModel()) {
     val context = LocalContext.current
     var message by remember { mutableStateOf(TextFieldValue("")) }
     val relativeTime by viewModel.relativeTime.collectAsState()
+    val lastMessage by viewModel._lastReceivedMessage.collectAsState()
 
     // Retrieve coupleId and role
     val prefs by lazy { PreferenceManager(context) }
     val role = prefs.getRole()
+    val oppositeRole = if (role == Constants.PARTNER_A) Constants.PARTNER_B else Constants.PARTNER_A
 
-    val initial = role.takeLast(1).uppercase() // "PartnerA" → "A", "PartnerB" → "B"
+    val ownerInitial = role.takeLast(1).uppercase() // "PartnerA" → "A", "PartnerB" → "B"
+    val partnerInitial = oppositeRole.takeLast(1).uppercase() // "PartnerA" → "A", "PartnerB" → "B"
 
     LaunchedEffect(Unit) {
         val coupleId = viewModel.coupleId ?: return@LaunchedEffect
@@ -55,8 +59,8 @@ fun MessageScreen(viewModel: MainViewModel = viewModel()) {
         ) {
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                PartnerHeader(initial, timestampText = relativeTime)
-                Spacer(modifier = Modifier.height(24.dp))
+                PartnerHeader(ownerInitial, partnerInitial, lastMessage = lastMessage, timestampText = relativeTime, viewModel.coupleId.toString())
+                Spacer(modifier = Modifier.height(18.dp))
                 MessageInput(
                     message = message,
                     onMessageChange = { message = it },

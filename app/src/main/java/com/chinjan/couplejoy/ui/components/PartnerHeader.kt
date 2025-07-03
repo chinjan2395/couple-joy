@@ -14,9 +14,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.chinjan.couplejoy.R
+import com.chinjan.couplejoy.data.model.Message
+import com.chinjan.couplejoy.ui.screen.MessageBubble
 
 @Composable
-fun PartnerHeader(initial: String, timestampText: String) {
+fun PartnerHeader(ownerInitial: String, partnerInitial: String, lastMessage: Message?, timestampText: String, coupleId: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
             modifier = Modifier
@@ -26,20 +28,38 @@ fun PartnerHeader(initial: String, timestampText: String) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = initial,
+                text = ownerInitial,
                 style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
                 color = Color.White
             )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "Couple ID: ${coupleId}",
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.Gray
+        )
 
-        if (timestampText.isNotEmpty()) {
-            Text(
+        if ((lastMessage != null && lastMessage.message.isNotBlank()) && timestampText.isNotEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                MessageBubble(initial = partnerInitial, text = lastMessage.message.toString(), timestamp = timestampText)
+            }
+            /*Text(
                 text = timestampText,
                 style = MaterialTheme.typography.labelMedium,
                 color = Color.Gray,
                 modifier = Modifier.padding(top = 4.dp)
+            )*/
+        } else {
+            Text(
+                text = "No message yet",
+                color = Color.DarkGray,
+                style = MaterialTheme.typography.bodyMedium
             )
         }
         
@@ -51,8 +71,6 @@ fun PartnerHeader(initial: String, timestampText: String) {
             textAlign = TextAlign.Center,
             color = Color(0xFF333333)
         )*/
-
-        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = stringResource(R.string.message_screen_title),
