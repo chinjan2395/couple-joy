@@ -76,27 +76,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    private val googleSignInLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        val intent = result.data
-        Log.d("Auth", "Sign-In result intent: $intent")  // Inspect the intent
-        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-        try {
-            val account = task.getResult(ApiException::class.java)
-            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-            FirebaseAuth.getInstance().signInWithCredential(credential)
-                .addOnCompleteListener { authResult ->
-                    if (authResult.isSuccessful) {
-                        val user = FirebaseAuth.getInstance().currentUser
-                        Log.d("Auth", "Signed in as: ${user?.email} (${user?.uid})")
-                    } else {
-                        Log.e("Auth", "Firebase auth failed", authResult.exception)
-                    }
-                }
-        } catch (e: ApiException) {
-            Log.e("Auth", "Google Sign-In failed", e)
-        }
-    }
 }
