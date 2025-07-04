@@ -15,7 +15,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.chinjan.couplejoy.R
 import com.chinjan.couplejoy.data.model.Message
-import com.chinjan.couplejoy.ui.screen.MessageBubble
 
 @Composable
 fun PartnerHeader(ownerInitial: String, partnerInitial: String, lastMessage: Message?, timestampText: String, coupleId: String) {

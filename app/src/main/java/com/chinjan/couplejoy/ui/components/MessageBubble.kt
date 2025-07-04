@@ -1,4 +1,4 @@
-package com.chinjan.couplejoy.ui.screen
+package com.chinjan.couplejoy.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
