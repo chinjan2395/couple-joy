@@ -40,30 +40,6 @@ class MainActivity : ComponentActivity() {
         FirebaseApp.initializeApp(this)
         Log.d("Auth", "Signed in using GoogleSignInOptions" + FirebaseAuth.getInstance().currentUser)
 
-        // Sign in anonymously with Firebase Auth
-        /*FirebaseAuth.getInstance().signInAnonymously()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val uid = task.result?.user?.uid
-                    Log.d("Auth", "Signed in anonymously as $uid")
-                } else {
-                    Log.e("Auth", "Anonymous sign-in failed", task.exception)
-                }
-            }*/
-
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id)) // From Firebase project settings
-            .requestEmail()
-            .build()
-
-        googleSignInClient = GoogleSignIn.getClient(this, gso)
-
-        // If not signed in, trigger sign-in
-
-        if (FirebaseAuth.getInstance().currentUser == null) {
-            googleSignInLauncher.launch(googleSignInClient.signInIntent)
-        }
-
         // 🔐 Ask for POST_NOTIFICATIONS permission on Android 13+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(
