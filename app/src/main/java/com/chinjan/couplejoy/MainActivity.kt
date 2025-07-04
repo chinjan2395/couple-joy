@@ -61,12 +61,28 @@ class MainActivity : ComponentActivity() {
                 color = Color(0xFFFFF3F6)
             ) {
 
+                val context = LocalContext.current
                 val viewModel: MainViewModel = viewModel()
                 val isSetupDone = viewModel.isSetupDone.collectAsState()
+                val authViewModel: AuthViewModel = viewModel()
+                val currentUser by authViewModel.currentUser.collectAsState()
+
+                val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                    authViewModel.handleSignInResult(result.data)
+                }
 
                 if (isSetupDone.value) {
                     MessageScreen()
                 } else {
+                    if (currentUser == null) {
+                        SignInScreen(
+                            onSignInClicked = {
+                                Log.d("SignInScreen", "signInIntent")
+                                val signInIntent = authViewModel.getGoogleSignInClient(context).signInIntent
+                                launcher.launch(signInIntent)
+                            }
+                        )
+                    } else {
                     CoupleSetupScreen(
                         onContinue = {
                             viewModel.markSetupComplete()
